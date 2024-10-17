@@ -51,11 +51,15 @@
             ctx.fillStyle = '#e6e6e6';
             ctx.fill();
 
-            // Draw the tick marks around the circumference (for every 10 mph)
+            // Gauge arc starts at 225 degrees and ends at 315 degrees
+            const startAngle = (225 * Math.PI) / 180;
+            const endAngle = (315 * Math.PI) / 180;
+
+            // Draw the tick marks around the arc (every 10 mph)
             const totalTicks = 10;
             const tickLength = 15;
             for (let i = 0; i <= totalTicks; i++) {
-                const angle = (i / totalTicks) * Math.PI * 2;
+                const angle = startAngle + (i / totalTicks) * (endAngle - startAngle);
                 const startX = 150 + 125 * Math.cos(angle);
                 const startY = 150 + 125 * Math.sin(angle);
                 const endX = 150 + (125 - tickLength) * Math.cos(angle);
@@ -68,7 +72,7 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Label the tick marks (every 10 mph)
+                // Label the tick marks (every 10 mph starting at 0)
                 const tickSpeed = i * 10;
                 ctx.font = '14px Arial';
                 ctx.fillStyle = '#000';
@@ -91,9 +95,10 @@
             ctx.font = '20px Arial';
             ctx.fillText(speedMph.toFixed(1) + ' mph', 150, 220);
 
-            // Speed gauge outline (basic, dynamic arc)
+            // Speed gauge arc (dynamic, from 225 degrees to 315 degrees)
+            const currentArcEnd = startAngle + ((speedMph / 100) * (endAngle - startAngle));
             ctx.beginPath();
-            ctx.arc(150, 150, 140, 0, (speedMph / 100) * 2 * Math.PI);
+            ctx.arc(150, 150, 140, startAngle, currentArcEnd);
             ctx.strokeStyle = '#00b300';
             ctx.lineWidth = 10;
             ctx.stroke();
@@ -119,10 +124,13 @@
             gpsStatus.textContent = "Unable to access GPS. Please enable location services.";
         }
 
+        // Refresh the GPS data and gauge every 2.5 seconds
         if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(updateSpeed, handleGPSError, {
-                enableHighAccuracy: true
-            });
+            setInterval(() => {
+                navigator.geolocation.getCurrentPosition(updateSpeed, handleGPSError, {
+                    enableHighAccuracy: true
+                });
+            }, 2500);  // 2.5 seconds refresh cycle
         } else {
             gpsStatus.textContent = "Geolocation is not supported by this browser.";
         }

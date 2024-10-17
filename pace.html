@@ -12,7 +12,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #f0f0f0';
         }
         canvas {
             background-color: #ffffff;
@@ -51,7 +51,7 @@
             ctx.fillStyle = '#e6e6e6';
             ctx.fill();
 
-            // Gauge arc starts at 225 degrees and ends at 315 degrees
+            // Gauge arc starts at 225 degrees and ends at 315 degrees (converted to radians)
             const startAngle = (225 * Math.PI) / 180;
             const endAngle = (315 * Math.PI) / 180;
 
@@ -113,6 +113,7 @@
                 return;
             }
 
+            // Clear the GPS unavailable error once speed is available
             gpsStatus.textContent = "";
             currentSpeedMph = speedMps * 2.237; // meters per second to mph
             const timeInMinutes = (10 / currentSpeedMph) * 60;

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Gauge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .container {
+            text-align: center;
+        }
+        .warning {
+            color: red;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="speedGauge" width="300" height="300"></canvas>
+        <p id="gpsStatus" class="warning"></p>
+    </div>
+
+    <script>
+        // Access the canvas and context
+        const canvas = document.getElementById('speedGauge');
+        const ctx = canvas.getContext('2d');
+        const gpsStatus = document.getElementById('gpsStatus');
+        
+        let currentSpeedMph = 0;
+
+        // Function to draw the gauge
+        function drawGauge(speedMph, minutesPer10Miles) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Gauge background
+            ctx.beginPath();
+            ctx.arc(150, 150, 140, 0, 2 * Math.PI);
+            ctx.fillStyle = '#e6e6e6';
+            ctx.fill();
+
+            // Speed text (inside: minutes per 10 miles)
+            ctx.fillStyle = '#000';
+            ctx.font = '40px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(minutesPer10Miles.toFixed(1), 150, 160);
+
+            // Outer text (small mph)
+            ctx.font = '20px Arial';
+            ctx.fillText(speedMph.toFixed(1) + ' mph', 150, 200);
+
+            // Speed gauge outline (basic)
+            ctx.beginPath();
+            ctx.arc(150, 150, 140, 0, (speedMph / 100) * 2 * Math.PI);
+            ctx.strokeStyle = '#00b300';
+            ctx.lineWidth = 10;
+            ctx.stroke();
+        }
+
+        // Function to calculate speed from meters per second to mph and minutes per 10 miles
+        function updateSpeed(position) {
+            const speedMps = position.coords.speed; // Speed in meters per second
+
+            if (speedMps === null) {
+                gpsStatus.textContent = "GPS speed unavailable.";
+                return;
+            }
+
+            gpsStatus.textContent = "";
+            
+            // Convert speed to mph
+            currentSpeedMph = speedMps * 2.237; // meters per second to mph
+            
+            // Convert speed to minutes per 10 miles
+            const timeInMinutes = (10 / currentSpeedMph) * 60;
+            
+            // Draw the gauge
+            drawGauge(currentSpeedMph, timeInMinutes);
+        }
+
+        // Handle GPS errors
+        function handleGPSError() {
+            gpsStatus.textContent = "Unable to access GPS. Please enable location services.";
+        }
+
+        // Watch for GPS updates
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(updateSpeed, handleGPSError, {
+                enableHighAccuracy: true
+            });
+        } else {
+            gpsStatus.textContent = "Geolocation is not supported by this browser.";
+        }
+    </script>
+</body>
+</html>

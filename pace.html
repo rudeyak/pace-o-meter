@@ -95,10 +95,10 @@
             ctx.font = '20px Arial';
             ctx.fillText(speedMph.toFixed(1) + ' mph', 150, 220);
 
-            // Speed gauge arc (dynamic, from 7*pi/6 to 11*pi/6)
+            // Speed gauge arc (dynamic, from 7*pi/6 to 11*pi/6, drawn clockwise)
             const currentArcEnd = startAngle + ((speedMph / 100) * (endAngle - startAngle));
             ctx.beginPath();
-            ctx.arc(150, 150, 140, startAngle, currentArcEnd);
+            ctx.arc(150, 150, 140, startAngle, currentArcEnd, false); // false for clockwise direction
             ctx.strokeStyle = '#00b300';
             ctx.lineWidth = 10;
             ctx.stroke();

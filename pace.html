@@ -12,7 +12,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0';
+            background-color: #f0f0f0;
         }
         canvas {
             background-color: #ffffff;
@@ -51,9 +51,9 @@
             ctx.fillStyle = '#e6e6e6';
             ctx.fill();
 
-            // Gauge arc starts at 225 degrees and ends at 315 degrees (converted to radians)
-            const startAngle = (135 * Math.PI) / 180;
-            const endAngle = (45 * Math.PI) / 180;
+            // Gauge arc starts at 7*pi/6 (210 degrees) and ends at 11*pi/6 (330 degrees)
+            const startAngle = (7 * Math.PI) / 6;
+            const endAngle = (11 * Math.PI) / 6;
 
             // Draw the tick marks around the arc (every 10 mph)
             const totalTicks = 10;
@@ -95,7 +95,7 @@
             ctx.font = '20px Arial';
             ctx.fillText(speedMph.toFixed(1) + ' mph', 150, 220);
 
-            // Speed gauge arc (dynamic, from 225 degrees to 315 degrees)
+            // Speed gauge arc (dynamic, from 7*pi/6 to 11*pi/6)
             const currentArcEnd = startAngle + ((speedMph / 100) * (endAngle - startAngle));
             ctx.beginPath();
             ctx.arc(150, 150, 140, startAngle, currentArcEnd);
